@@ -994,6 +994,288 @@
     transform: translateZ(0);
   }
 
+
+  /* 3D CARD ANIMATIONS */
+  .menu-card {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+  
+  .menu-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,107,26,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 1.2rem;
+    pointer-events: none;
+  }
+  
+  .menu-card:hover {
+    transform: translateY(-12px) rotateX(5deg) rotateY(-5deg) scale(1.03);
+    box-shadow: 0 30px 60px rgba(255,107,26,0.3), 
+                0 0 40px rgba(255,107,26,0.2);
+  }
+  
+  .menu-card:hover::before {
+    opacity: 1;
+  }
+  
+  /* CARD IMAGE SECTION */
+  .card-image {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, rgba(255,107,26,0.1), rgba(255,179,71,0.05));
+    border-radius: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .menu-card:hover .card-image img {
+    transform: scale(1.15) rotate(2deg);
+  }
+  
+  /* FLOATING ANIMATION */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .card-image {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .menu-card:hover .card-image {
+    animation: none;
+  }
+  
+  /* GLOW EFFECT */
+  @keyframes cardGlow {
+    0% { box-shadow: 0 0 20px rgba(255,107,26,0), inset 0 0 20px rgba(255,107,26,0); }
+    50% { box-shadow: 0 0 30px rgba(255,107,26,0.4), inset 0 0 30px rgba(255,107,26,0.1); }
+    100% { box-shadow: 0 0 20px rgba(255,107,26,0), inset 0 0 20px rgba(255,107,26,0); }
+  }
+  
+  .menu-card {
+    animation: cardGlow 4s ease-in-out infinite;
+  }
+  
+  /* MODAL ENHANCEMENTS WITH 3D */
+  .item-modal-box {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+  
+  .item-modal-overlay.open .item-modal-box {
+    transform: scale(1) translateY(0) rotateX(0deg);
+    animation: modalEntrance 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  @keyframes modalEntrance {
+    0% {
+      transform: scale(0.7) translateY(50px) rotateX(10deg);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1) translateY(0) rotateX(0deg);
+      opacity: 1;
+    }
+  }
+  
+  /* ITEM IMAGE IN MODAL */
+  .item-modal-image {
+    width: 100%;
+    height: 280px;
+    background: linear-gradient(135deg, rgba(255,107,26,0.2), rgba(255,179,71,0.1));
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    position: relative;
+    animation: imageFadeIn 0.6s ease;
+  }
+  
+  .item-modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  @keyframes imageFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9) rotateY(10deg);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) rotateY(0deg);
+    }
+  }
+  
+  /* DETAILS ANIMATION */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .item-modal-name {
+    animation: slideUp 0.6s ease 0.1s both;
+  }
+  
+  .item-modal-desc {
+    animation: slideUp 0.6s ease 0.2s both;
+  }
+  
+  .item-modal-price-row {
+    animation: slideUp 0.6s ease 0.3s both;
+  }
+  
+  .item-modal-info {
+    animation: slideUp 0.6s ease 0.4s both;
+  }
+  
+  .item-modal-actions {
+    animation: slideUp 0.6s ease 0.5s both;
+  }
+  
+  /* BUTTON ANIMATIONS */
+  .item-modal-order-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .item-modal-order-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+  
+  .item-modal-order-btn:hover::before {
+    left: 100%;
+  }
+  
+  /* RIPPLE EFFECT */
+  @keyframes ripple {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 1;
+    }
+    100% {
+      width: 300px;
+      height: 300px;
+      opacity: 0;
+    }
+  }
+  
+  .item-modal-order-btn:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    animation: ripple 0.6s ease;
+  }
+
+
+  /* SPARKLE EFFECTS */
+  @keyframes sparkle {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--tx), var(--ty)) scale(0);
+    }
+  }
+  
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1.2rem;
+    animation: sparkle 1s ease-out forwards;
+  }
+  
+  /* CARD SHINE EFFECT */
+  .menu-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+    border-radius: 1.2rem;
+    pointer-events: none;
+  }
+  
+  .menu-card:hover::after {
+    left: 100%;
+  }
+  
+  /* BUTTON GLOW */
+  .item-modal-order-btn {
+    box-shadow: 0 0 0 0 rgba(255,107,26,0.7);
+  }
+  
+  @keyframes buttonGlow {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255,107,26,0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(255,107,26,0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(255,107,26,0);
+    }
+  }
+  
+  .item-modal-order-btn {
+    animation: buttonGlow 2s infinite;
+  }
+  
+  /* MODAL BACKDROP BLUR */
+  .item-modal-overlay {
+    backdrop-filter: blur(5px);
+  }
+  
+  .item-modal-overlay.open {
+    backdrop-filter: blur(10px);
+  }
+
 </style>
 </head>
 <body>
@@ -1364,7 +1646,13 @@
       </div>
       <div class="item-modal-actions">
         <a href="#" onclick="openOrder(event)" class="item-modal-order-btn">📲 Order Now</a>
-        <a href="tel:+919810213453" class="item-modal-call-btn">📞 Call</a>
+        <a href="tel:+919810213453" class="item-modal-call-btn">📞 Call Now</a>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,107,26,0.15);">
+        <p style="font-size:0.75rem;color:var(--muted);text-align:center;letter-spacing:0.05em;">
+          💬 Questions? Reach out anytime!<br>
+          We're available 24×7 to serve you.
+        </p>
       </div>
     </div>
   </div>
@@ -1510,11 +1798,25 @@ const categoryLabels = {
 };
 
 function openItemModal(item) {
-  const emoji = categoryEmojis[item.type] || '🍽';
+  const emojiMap = {
+    'Aloo Roll': '🌯', 'Mix Veg Roll': '🥒', 'Paneer Roll': '🧀',
+    'Egg Roll': '🥚', 'Chilli Chicken Roll': '🌶', 'Chicken Tikka Roll': '🍗',
+    'Afgani Chicken Roll': '🍖', 'Veg Chowmein': '🍜', 'Egg Chowmein': '🥚',
+    'Chicken Chowmein': '🍗', 'Schezwan Egg Noodles': '🔥', 'Schezwan Chicken Noodles': '🌶',
+    'Hakka Noodles (Veg)': '🥢', 'Hakka Noodles (Chicken)': '🍗',
+    'Veg Fried Rice': '🍚', 'Schezwan Fried Rice (Veg)': '🔥', 'Egg Fried Rice': '🥚',
+    'Chicken Fried Rice': '🍗', 'Schezwan Egg Fried Rice': '🌶', 'Schezwan Chicken Fried Rice': '🍚',
+    'Veg Momos (8 Pcs)': '🥟', 'Paneer Momos (8 Pcs)': '🧀', 'Fried Veg Momos (8 Pcs)': '🌯',
+    'Tandoori Momos (8 Pcs)': '🔥', 'Chicken Momos (8 Pcs)': '🍗', 'Fried Chicken Momos (8 Pcs)': '🍖',
+    'Tomato Soup': '🍅', 'Veg Sweet Corn Soup': '🌽', 'Veg Hot & Sour Soup': '🌶',
+    'Chicken Sweet Corn Soup': '🍗', 'Chicken Hot & Sour Soup': '🔥'
+  };
+  const emoji = emojiMap[item.name] || categoryEmojis[item.type] || '🍽';
+  document.getElementById('imImageDisplay').innerHTML = `<div style="font-size:6rem;text-align:center;">${emoji}</div>`;
   document.getElementById('imEmoji').textContent = emoji;
   document.getElementById('imName').textContent = item.name;
   document.getElementById('imType').textContent = categoryLabels[item.type] || item.type;
-  document.getElementById('imDesc').textContent = item.desc;
+  document.getElementById('imDesc').textContent = item.desc + " • Perfect for cravings that demand satisfaction!";
   document.getElementById('imPrice').textContent = item.price;
   const badge = document.getElementById('imVegBadge');
   badge.className = 'item-modal-veg-badge ' + (item.veg ? 'veg-badge' : 'nonveg-badge');
@@ -1538,7 +1840,30 @@ function createCard(item) {
   const div = document.createElement('div');
   div.className = 'menu-card tilt';
   div.dataset.type = item.type;
+  
+  // Get emoji for item
+  const emojiMap = {
+    'Aloo Roll': '🌯', 'Mix Veg Roll': '🥒', 'Paneer Roll': '🧀',
+    'Egg Roll': '🥚', 'Chilli Chicken Roll': '🌶', 'Chicken Tikka Roll': '🍗',
+    'Afgani Chicken Roll': '🍖', 'Veg Chowmein': '🍜', 'Egg Chowmein': '🥚',
+    'Chicken Chowmein': '🍗', 'Schezwan Egg Noodles': '🔥', 'Schezwan Chicken Noodles': '🌶',
+    'Hakka Noodles (Veg)': '🥢', 'Hakka Noodles (Chicken)': '🍗',
+    'Veg Fried Rice': '🍚', 'Schezwan Fried Rice (Veg)': '🔥', 'Egg Fried Rice': '🥚',
+    'Chicken Fried Rice': '🍗', 'Schezwan Egg Fried Rice': '🌶', 'Schezwan Chicken Fried Rice': '🍚',
+    'Veg Momos (8 Pcs)': '🥟', 'Paneer Momos (8 Pcs)': '🧀', 'Fried Veg Momos (8 Pcs)': '🌯',
+    'Tandoori Momos (8 Pcs)': '🔥', 'Chicken Momos (8 Pcs)': '🍗', 'Fried Chicken Momos (8 Pcs)': '🍖',
+    'Tomato Soup': '🍅', 'Veg Sweet Corn Soup': '🌽', 'Veg Hot & Sour Soup': '🌶',
+    'Chicken Sweet Corn Soup': '🍗', 'Chicken Hot & Sour Soup': '🔥'
+  };
+  
+  const emoji = emojiMap[item.name] || '🍽';
+  
   div.innerHTML = `
+    <div class="card-image">
+      <div style="font-size:4rem;text-align:center;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, rgba(255,107,26,0.1), rgba(255,179,71,0.05));">
+        ${emoji}
+      </div>
+    </div>
     <div class="card-top">
       <div class="item-name">${item.name}</div>
       <div class="item-badge ${item.veg ? 'veg' : 'nonveg'}"><div class="dot"></div></div>
@@ -1546,7 +1871,7 @@ function createCard(item) {
     <div class="item-desc">${item.desc}</div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;">
       <div class="item-price">${item.price}</div>
-      <span style="font-size:0.72rem;color:var(--fire);font-weight:600;letter-spacing:0.05em;opacity:0.8;">TAP FOR INFO →</span>
+      <span style="font-size:0.72rem;color:var(--fire);font-weight:600;letter-spacing:0.05em;opacity:0.8;">TAP →</span>
     </div>
   `;
   // Click to show detail modal
@@ -1663,6 +1988,31 @@ document.addEventListener('click', e => {
 // LOADER
 setTimeout(() => document.getElementById('loader').classList.add('fade-out'), 1800);
 setTimeout(() => document.getElementById('loader').remove(), 2600);
+
+function createSparkles(x, y) {
+  const sparkles = ['✨', '⭐', '💫', '✨'];
+  for(let i = 0; i < 3; i++) {
+    setTimeout(() => {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+      sparkle.style.left = x + 'px';
+      sparkle.style.top = y + 'px';
+      sparkle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+      sparkle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 1000);
+    }, i * 100);
+  }
+}
+
+// Add sparkle on modal open
+const oldOpenItemModal = openItemModal;
+window.openItemModal = function(item) {
+  oldOpenItemModal(item);
+  createSparkles(window.innerWidth / 2, window.innerHeight / 2);
+};
+
 </script>
 </body>
 </html>
