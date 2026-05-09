@@ -736,16 +736,22 @@
     border-radius: 1.5rem;
     padding: 0;
     max-width: 500px; width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
     transform: scale(0.85) translateY(20px);
     transition: transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
+    z-index: 6000;
   }
   .item-modal-overlay.open .item-modal-box { transform: scale(1) translateY(0); }
   .item-modal-header {
     background: linear-gradient(135deg, rgba(255,107,26,0.25), rgba(255,179,71,0.1));
-    padding: 2rem 2rem 1.5rem;
+    padding: 2rem 2rem 1.5rem 2rem;
     border-bottom: 1px solid rgba(255,107,26,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 6002;
   }
   .item-modal-emoji { font-size: 3rem; margin-bottom: 0.5rem; }
   .item-modal-name { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: #FFF5E6; margin-bottom: 0.3rem; }
@@ -787,14 +793,28 @@
   }
   .item-modal-call-btn:hover { background: rgba(255,107,26,0.2); transform: translateY(-2px); }
   .item-modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,107,26,0.2);
-    color: #9C8670; font-size: 1.1rem; cursor: none;
-    width: 32px; height: 32px; border-radius: 50%;
+    position: fixed; top: 2rem; right: 2rem;
+    background: rgba(0,0,0,0.7); border: 2px solid rgba(255,107,26,0.5);
+    color: #FFB347; font-size: 1.3rem; cursor: pointer;
+    width: 40px; height: 40px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s; line-height: 1;
+    transition: all 0.3s; line-height: 1; z-index: 6001;
+    padding: 0; font-weight: bold;
   }
-  .item-modal-close:hover { color: #FF6B1A; border-color: #FF6B1A; }
+  .item-modal-close:hover { 
+      color: white; 
+      border-color: #FFB347; 
+      background: rgba(255,107,26,0.3);
+      transform: scale(1.1) rotate(90deg);
+    }
+    
+    @media (max-width: 768px) {
+      .item-modal-close {
+        top: 1rem; right: 1rem;
+        width: 36px; height: 36px;
+        font-size: 1.1rem;
+      }
+    }
   .menu-card { cursor: none; }
 
   /* Stat card compact */
