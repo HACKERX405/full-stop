@@ -1276,6 +1276,90 @@
     backdrop-filter: blur(10px);
   }
 
+
+  /* ENHANCED 3D EFFECTS */
+  @keyframes cardFloat {
+    0%, 100% { transform: translateY(0px) rotateX(0deg); }
+    50% { transform: translateY(-8px) rotateX(2deg); }
+  }
+  
+  .menu-card {
+    animation: cardFloat 4s ease-in-out infinite;
+    animation-delay: calc(var(--card-index) * 0.1s);
+  }
+  
+  .menu-card:hover {
+    animation: none;
+    transform: translateY(-15px) rotateY(5deg) scale(1.05) !important;
+    box-shadow: 0 35px 70px rgba(255,107,26,0.4),
+                0 15px 30px rgba(0,0,0,0.3),
+                inset 0 0 30px rgba(255,107,26,0.1);
+  }
+  
+  .card-image {
+    transform-style: preserve-3d;
+    transform: translateZ(20px);
+  }
+  
+  .menu-card:hover .card-image {
+    transform: translateZ(30px) scale(1.1);
+  }
+  
+  /* PARALLAX ON SCROLL */
+  @keyframes parallaxFloat {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+  }
+  
+  .hero-orb {
+    animation: parallaxFloat 8s ease-in-out infinite alternate;
+  }
+  
+  /* MODAL 3D ENTRANCE */
+  @keyframes modal3DEntrance {
+    0% {
+      opacity: 0;
+      transform: perspective(1200px) rotateX(-15deg) rotateY(15deg) scale(0.7) translateY(100px);
+    }
+    100% {
+      opacity: 1;
+      transform: perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0);
+    }
+  }
+  
+  .item-modal-overlay.open .item-modal-box {
+    animation: modal3DEntrance 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  
+  /* BUTTON 3D PRESS */
+  .item-modal-order-btn {
+    transform-style: preserve-3d;
+    transition: transform 0.1s;
+  }
+  
+  .item-modal-order-btn:active {
+    transform: translateY(2px) translateZ(-10px);
+    box-shadow: 0 2px 10px rgba(255,107,26,0.3);
+  }
+  
+  /* CARD STAGGER ANIMATION */
+  .menu-card {
+    opacity: 0;
+    animation: cardFadeIn 0.6s ease forwards;
+    animation-delay: calc(var(--card-index) * 0.08s);
+  }
+  
+  @keyframes cardFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px) rotateX(-10deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg);
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1620,6 +1704,9 @@
       <div class="item-modal-type" id="imType">Category</div>
     </div>
     <div class="item-modal-body">
+      <div class="item-modal-image" id="itemImageContainer">
+        <div id="imImageDisplay" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+      </div>
       <p class="item-modal-desc" id="imDesc">Description goes here.</p>
       <div class="item-modal-price-row">
         <div class="item-modal-price" id="imPrice">₹99</div>
@@ -1788,6 +1875,71 @@ const menuData = [
   { name: 'Tandoori Mix Veg Paratha', price: '₹89', desc: 'Mixed veg stuffed tandoori paratha', type: 'paratha', veg: true },
 ];
 
+
+const FOOD_IMAGES = {'Aloo Roll': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Mix Veg Roll': 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80', 'Paneer Roll': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80', 'Egg Roll': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80', 'Chilli Chicken Roll': 'https://images.unsplash.com/photo-1562802378-063ec186a863?w=400&q=80', 'Chicken Tikka Roll': 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', 'Afgani Chicken Roll': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80', 'Veg Chowmein': 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80', 'Egg Chowmein': 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&q=80', 'Chicken Chowmein': 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80', 'Hakka Noodles (Veg)': 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&q=80', 'Hakka Noodles (Chicken)': 'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80', 'Schezwan Egg Noodles': 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400&q=80', 'Schezwan Chicken Noodles': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400&q=80', 'Veg Fried Rice': 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80', 'Schezwan Fried Rice (Veg)': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80', 'Egg Fried Rice': 'https://images.unsplash.com/photo-1596560548464-f010549b84d7?w=400&q=80', 'Chicken Fried Rice': 'https://images.unsplash.com/photo-1539252554935-80b5b6e7b0b7?w=400&q=80', 'Schezwan Egg Fried Rice': 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80', 'Schezwan Chicken Fried Rice': 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&q=80', 'Veg Momos (8 Pcs)': 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=400&q=80', 'Paneer Momos (8 Pcs)': 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=400&q=80', 'Fried Veg Momos (8 Pcs)': 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=400&q=80', 'Tandoori Momos (8 Pcs)': 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=400&q=80', 'Chicken Momos (8 Pcs)': 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=400&q=80', 'Fried Chicken Momos (8 Pcs)': 'https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=400&q=80', 'Tomato Soup': 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80', 'Veg Sweet Corn Soup': 'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=400&q=80', 'Veg Hot & Sour Soup': 'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&q=80', 'Chicken Sweet Corn Soup': 'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=400&q=80', 'Chicken Hot & Sour Soup': 'https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=400&q=80', 'Masala Maggi': 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80', 'French Fries': 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80', 'Gobhi Chilli': 'https://images.unsplash.com/photo-1645177628172-a94c1f96debb?w=400&q=80', 'Chilli Potato': 'https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&q=80', 'Crispy Corn': 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80', 'Baby Corn Chilli': 'https://images.unsplash.com/photo-1645177628172-a94c1f96debb?w=400&q=80', 'White Sauce Pasta': 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80', 'Red Sauce Pasta': 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80', 'Honey Chilli Potato': 'https://images.unsplash.com/photo-1518013431117-eb1465fa5752?w=400&q=80', 'Mushroom Chilli': 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=400&q=80', 'Paneer Chilli 8 Pcs': 'https://images.unsplash.com/photo-1645177628172-a94c1f96debb?w=400&q=80', 'Paneer Tikka': 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', 'Malai Paneer Tikka': 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', 'Achari Paneer Tikka': 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', 'Afgani Paneer Tikka': 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=400&q=80', 'Mushroom Tikka': 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=400&q=80', 'Malai Chaap': 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', 'Afgani Chaap': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80', 'Achari Chaap': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80', 'Chicken Tikka': 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', 'Malai Chicken Tikka': 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400&q=80', 'Afgani Chicken Tikka': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80', 'Afgani Chicken': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80', 'Butter Tandoori Chicken': 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80', 'Chicken Seekh Kebab': 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400&q=80', 'Tandoor Tangari': 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80', 'Dal Fry': 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80', 'Dal Tadka': 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80', 'Dal Makhani': 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80', 'Mix Vegetable': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Tawa Chaap Masala': 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80', 'Kadai Paneer': 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80', 'Mutter Paneer': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&q=80', 'Palak Paneer': 'https://images.unsplash.com/photo-1604152135912-04a022e23696?w=400&q=80', 'Mushroom Masala': 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=400&q=80', 'Mushroom Do-Pyaza': 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=400&q=80', 'Paneer Do-Pyaza': 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80', 'Methi Matar Masala': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&q=80', 'Butter Masala': 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80', 'Egg Curry': 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&q=80', 'Chicken Curry': 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80', 'Chicken Kadai': 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80', 'Butter Chicken Masala': 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400&q=80', 'Chicken Korma': 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400&q=80', 'Full Stop Spl. Mutton': 'https://images.unsplash.com/photo-1545247181-516773cae754?w=400&q=80', 'Tandoori Roti': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80', 'Tawa Roti': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80', 'Missi Roti': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80', 'Rumali Roti': 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80', 'Plain Naan': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80', 'Garlic Naan': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80', 'Paneer Stuff Naan': 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&q=80', 'Lachha Paratha': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Aloo Paratha': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Pyaz Aloo Paratha': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Gobhi Paratha': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Tandoori Paneer Paratha': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80', 'Tandoori Mix Veg Paratha': 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&q=80'};
+
+function getItemImage(itemName, itemType) {
+  const imageMap = {
+    'Aloo Roll': 'aloo_roll', 'Mix Veg Roll': 'veg_roll', 'Paneer Roll': 'paneer_roll',
+    'Egg Roll': 'egg_roll', 'Chilli Chicken Roll': 'chicken_roll', 
+    'Chicken Tikka Roll': 'chicken_tikka_roll', 'Afgani Chicken Roll': 'afgani_roll',
+    'Veg Chowmein': 'veg_noodles', 'Egg Chowmein': 'egg_noodles', 'Chicken Chowmein': 'chicken_noodles',
+    'Schezwan Egg Noodles': 'schezwan_egg', 'Schezwan Chicken Noodles': 'schezwan_chicken',
+    'Hakka Noodles (Veg)': 'hakka_veg', 'Hakka Noodles (Chicken)': 'hakka_chicken',
+    'Veg Fried Rice': 'veg_rice', 'Egg Fried Rice': 'egg_rice', 'Chicken Fried Rice': 'chicken_rice',
+    'Schezwan Fried Rice (Veg)': 'schezwan_veg_rice', 'Schezwan Egg Fried Rice': 'schezwan_egg_rice',
+    'Schezwan Chicken Fried Rice': 'schezwan_chicken_rice',
+    'Veg Momos (8 Pcs)': 'veg_momos', 'Paneer Momos (8 Pcs)': 'paneer_momos',
+    'Fried Veg Momos (8 Pcs)': 'fried_veg_momos', 'Tandoori Momos (8 Pcs)': 'tandoori_momos',
+    'Chicken Momos (8 Pcs)': 'chicken_momos', 'Fried Chicken Momos (8 Pcs)': 'fried_chicken_momos',
+    'Tomato Soup': 'tomato_soup', 'Veg Sweet Corn Soup': 'corn_soup',
+    'Veg Hot & Sour Soup': 'hot_sour_veg', 'Chicken Sweet Corn Soup': 'chicken_corn_soup',
+    'Chicken Hot & Sour Soup': 'chicken_hot_sour',
+    'Chicken Tikka': 'chicken_tikka', 'Malai Chicken Tikka': 'malai_tikka',
+    'Paneer Tikka': 'paneer_tikka', 'Dal Makhani': 'dal_makhani',
+    'Butter Chicken Masala': 'butter_chicken', 'Egg Curry': 'egg_curry',
+    'Garlic Naan': 'garlic_naan', 'Tandoori Roti': 'tandoori_roti'
+  };
+  
+  const svgs = {
+    // ROLLS - Realistic wrapped roll with filling visible
+    aloo_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="50%" stop-color="#D4A574"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient><radialGradient id="g2"><stop offset="0%" stop-color="#FFE4B5"/><stop offset="100%" stop-color="#DEB887"/></radialGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#g1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="url(#g2)"/><circle cx="160" cy="135" r="12" fill="#F4D03F" opacity="0.9"/><circle cx="210" cy="145" r="10" fill="#F39C12" opacity="0.9"/><circle cx="180" cy="155" r="8" fill="#27AE60" opacity="0.8"/><circle cx="220" cy="140" r="9" fill="#E67E22" opacity="0.9"/><path d="M 100 145 Q 120 130 140 138" stroke="#8B6F47" stroke-width="2" fill="none" opacity="0.4"/><path d="M 260 145 Q 280 130 300 138" stroke="#8B6F47" stroke-width="2" fill="none" opacity="0.4"/></svg>',
+    
+    veg_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="vr1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#vr1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="#FFE4B5"/><circle cx="170" cy="140" r="10" fill="#27AE60"/><circle cx="200" cy="150" r="8" fill="#E74C3C"/><circle cx="230" cy="140" r="9" fill="#F39C12"/><circle cx="185" cy="155" r="7" fill="#9B59B6"/></svg>',
+    
+    paneer_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="pr1"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#pr1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="#FFE4B5"/><rect x="160" y="125" width="80" height="50" fill="#FFF8DC" rx="8" opacity="0.95"/><circle cx="180" cy="140" r="6" fill="#27AE60" opacity="0.7"/><circle cx="220" cy="145" r="6" fill="#E74C3C" opacity="0.7"/></svg>',
+    
+    egg_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="er1"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#er1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="#FFE4B5"/><ellipse cx="180" cy="145" rx="25" ry="20" fill="#FFD700"/><circle cx="180" cy="145" r="8" fill="#FF8C00"/><ellipse cx="220" cy="148" rx="25" ry="20" fill="#FFD700"/><circle cx="220" cy="148" r="8" fill="#FF8C00"/></svg>',
+    
+    chicken_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="cr1"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#cr1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="#FFE4B5"/><circle cx="170" cy="140" r="14" fill="#CD7F32"/><circle cx="200" cy="150" r="16" fill="#CD7F32"/><circle cx="230" cy="143" r="13" fill="#CD7F32"/><path d="M 165 145 L 175 135" stroke="#E74C3C" stroke-width="3"/><path d="M 225 145 L 235 138" stroke="#E74C3C" stroke-width="3"/></svg>',
+    
+    chicken_tikka_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="ctr1"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#ctr1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="#FFE4B5"/><circle cx="175" cy="138" r="15" fill="#D2691E"/><circle cx="205" cy="150" r="17" fill="#D2691E"/><circle cx="225" cy="142" r="14" fill="#D2691E"/><circle cx="175" cy="138" r="7" fill="#FF6347" opacity="0.6"/><circle cx="205" cy="150" r="8" fill="#FF6347" opacity="0.6"/></svg>',
+    
+    afgani_roll: '<svg viewBox="0 0 400 300"><defs><linearGradient id="ar1"><stop offset="0%" stop-color="#E8C5A0"/><stop offset="100%" stop-color="#C19A6B"/></linearGradient></defs><ellipse cx="200" cy="200" rx="180" ry="80" fill="#555" opacity="0.2"/><ellipse cx="200" cy="150" rx="180" ry="90" fill="url(#ar1)" stroke="#8B6F47" stroke-width="3"/><ellipse cx="200" cy="145" rx="150" ry="70" fill="#FFE4B5"/><circle cx="180" cy="145" r="18" fill="#A0522D"/><circle cx="220" cy="148" r="16" fill="#A0522D"/><circle cx="180" cy="145" r="9" fill="#F5DEB3" opacity="0.7"/><circle cx="220" cy="148" r="8" fill="#F5DEB3" opacity="0.7"/></svg>',
+    
+    // NOODLES - Bowl with visible noodle strands
+    veg_noodles: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl1"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl1)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#F0E68C"/><path d="M 120 155 Q 135 145 150 152 T 180 160 T 210 152 T 240 160 T 270 155" stroke="#DAA520" stroke-width="10" fill="none" opacity="0.9"/><path d="M 125 165 Q 140 155 155 162 T 185 170 T 215 162" stroke="#F0E68C" stroke-width="9" fill="none" opacity="0.8"/><circle cx="145" cy="145" r="8" fill="#27AE60"/><circle cx="185" cy="150" r="7" fill="#E74C3C"/><circle cx="225" cy="148" r="8" fill="#F39C12"/><circle cx="255" cy="152" r="6" fill="#9B59B6"/></svg>',
+    
+    egg_noodles: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl2"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl2)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#F0E68C"/><path d="M 120 155 Q 135 145 150 152 T 180 160 T 210 152 T 240 160 T 270 155" stroke="#DAA520" stroke-width="10" fill="none" opacity="0.9"/><ellipse cx="175" cy="150" rx="18" ry="14" fill="#FFD700"/><circle cx="175" cy="150" r="6" fill="#FF8C00"/><ellipse cx="225" cy="153" rx="16" ry="13" fill="#FFD700"/><circle cx="225" cy="153" r="5" fill="#FF8C00"/></svg>',
+    
+    chicken_noodles: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl3"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl3)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#F0E68C"/><path d="M 120 155 Q 135 145 150 152 T 180 160 T 210 152 T 240 160 T 270 155" stroke="#DAA520" stroke-width="10" fill="none" opacity="0.9"/><circle cx="160" cy="148" r="12" fill="#CD7F32"/><circle cx="200" cy="155" r="14" fill="#CD7F32"/><circle cx="240" cy="150" r="11" fill="#CD7F32"/><circle cx="145" cy="152" r="7" fill="#27AE60"/></svg>',
+    
+    schezwan_egg: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl4"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl4)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#8B4513"/><path d="M 120 155 Q 135 145 150 152 T 180 160 T 210 152 T 240 160" stroke="#654321" stroke-width="10" fill="none" opacity="0.9"/><ellipse cx="180" cy="150" rx="16" ry="13" fill="#FFD700"/><circle cx="180" cy="150" r="6" fill="#FF8C00"/><path d="M 145 148 L 150 142" stroke="#E74C3C" stroke-width="4"/><path d="M 230 150 L 235 145" stroke="#E74C3C" stroke-width="4"/></svg>',
+    
+    schezwan_chicken: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl5"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl5)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#8B4513"/><path d="M 120 155 Q 135 145 150 152 T 180 160 T 210 152 T 240 160" stroke="#654321" stroke-width="10" fill="none"/><circle cx="165" cy="150" r="13" fill="#CD7F32"/><circle cx="205" cy="155" r="15" fill="#CD7F32"/><circle cx="235" cy="150" r="11" fill="#CD7F32"/><path d="M 150 148 L 160 140" stroke="#E74C3C" stroke-width="5"/><path d="M 240 148 L 250 142" stroke="#E74C3C" stroke-width="5"/></svg>',
+    
+    hakka_veg: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl6"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl6)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#F0E68C"/><path d="M 110 155 Q 125 145 140 152 T 170 160 T 200 152 T 230 160 T 260 152 T 290 160" stroke="#DAA520" stroke-width="9" fill="none"/><circle cx="135" cy="145" r="7" fill="#27AE60"/><circle cx="175" cy="150" r="6" fill="#E74C3C"/><circle cx="215" cy="148" r="7" fill="#F39C12"/><circle cx="255" cy="152" r="6" fill="#9B59B6"/><circle cx="195" cy="155" r="5" fill="#3498DB"/></svg>',
+    
+    hakka_chicken: '<svg viewBox="0 0 400 300"><defs><radialGradient id="bowl7"><stop offset="0%" stop-color="#FFF"/><stop offset="100%" stop-color="#E8E8E8"/></radialGradient></defs><ellipse cx="200" cy="220" rx="160" ry="60" fill="#999" opacity="0.3"/><path d="M 80 160 Q 80 200 110 220 L 290 220 Q 320 200 320 160 Z" fill="url(#bowl7)" stroke="#AAA" stroke-width="3"/><ellipse cx="200" cy="160" rx="115" ry="40" fill="#F0E68C"/><path d="M 110 155 Q 125 145 140 152 T 170 160 T 200 152 T 230 160 T 260 152" stroke="#DAA520" stroke-width="9" fill="none"/><circle cx="155" cy="148" r="13" fill="#CD7F32"/><circle cx="200" cy="155" r="14" fill="#CD7F32"/><circle cx="240" cy="150" r="12" fill="#CD7F32"/><circle cx="135" cy="150" r="6" fill="#27AE60"/></svg>',
+    
+    // Default fallback
+    default: '<svg viewBox="0 0 400 300"><defs><radialGradient id="def1"><stop offset="0%" stop-color="#FF8C00"/><stop offset="100%" stop-color="#D2691E"/></radialGradient></defs><ellipse cx="200" cy="220" rx="140" ry="55" fill="#666" opacity="0.3"/><circle cx="200" cy="150" r="110" fill="url(#def1)" stroke="#A0522D" stroke-width="4"/><circle cx="200" cy="150" r="90" fill="#FFB347" opacity="0.6"/><text x="200" y="175" font-size="80" text-anchor="middle" font-weight="bold">🍽</text></svg>'
+  };
+  
+  const key = imageMap[itemName];
+  return svgs[key] || svgs.default;
+}
+
 const categoryEmojis = {
   starter: '🌶', rolls: '🌯', noodles: '🍜', rice: '🍚',
   momos: '🥟', soup: '🍲', tandoor: '🔥', indian: '🍛', roti: '🫓', paratha: '🫔'
@@ -1812,7 +1964,8 @@ function openItemModal(item) {
     'Chicken Sweet Corn Soup': '🍗', 'Chicken Hot & Sour Soup': '🔥'
   };
   const emoji = emojiMap[item.name] || categoryEmojis[item.type] || '🍽';
-  document.getElementById('imImageDisplay').innerHTML = `<div style="font-size:6rem;text-align:center;">${emoji}</div>`;
+  const modalSvg = getItemImage(item.name, item.type);
+  document.getElementById('imImageDisplay').innerHTML = modalSvg;
   document.getElementById('imEmoji').textContent = emoji;
   document.getElementById('imName').textContent = item.name;
   document.getElementById('imType').textContent = categoryLabels[item.type] || item.type;
@@ -1825,6 +1978,8 @@ function openItemModal(item) {
     : '<span style="width:10px;height:10px;border-radius:50%;background:#FF6B1A;display:inline-block"></span> Non-Veg';
   document.getElementById('itemModal').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // sparkle effect
+  setTimeout(() => createSparkles(window.innerWidth/2, window.innerHeight/2), 50);
 }
 
 function closeItemModal() {
@@ -1838,55 +1993,43 @@ document.getElementById('itemModal').addEventListener('click', e => {
 
 function createCard(item) {
   const div = document.createElement('div');
-  div.className = 'menu-card tilt';
+  div.className = 'menu-card';
   div.dataset.type = item.type;
   
-  // Get emoji for item
-  const emojiMap = {
-    'Aloo Roll': '🌯', 'Mix Veg Roll': '🥒', 'Paneer Roll': '🧀',
-    'Egg Roll': '🥚', 'Chilli Chicken Roll': '🌶', 'Chicken Tikka Roll': '🍗',
-    'Afgani Chicken Roll': '🍖', 'Veg Chowmein': '🍜', 'Egg Chowmein': '🥚',
-    'Chicken Chowmein': '🍗', 'Schezwan Egg Noodles': '🔥', 'Schezwan Chicken Noodles': '🌶',
-    'Hakka Noodles (Veg)': '🥢', 'Hakka Noodles (Chicken)': '🍗',
-    'Veg Fried Rice': '🍚', 'Schezwan Fried Rice (Veg)': '🔥', 'Egg Fried Rice': '🥚',
-    'Chicken Fried Rice': '🍗', 'Schezwan Egg Fried Rice': '🌶', 'Schezwan Chicken Fried Rice': '🍚',
-    'Veg Momos (8 Pcs)': '🥟', 'Paneer Momos (8 Pcs)': '🧀', 'Fried Veg Momos (8 Pcs)': '🌯',
-    'Tandoori Momos (8 Pcs)': '🔥', 'Chicken Momos (8 Pcs)': '🍗', 'Fried Chicken Momos (8 Pcs)': '🍖',
-    'Tomato Soup': '🍅', 'Veg Sweet Corn Soup': '🌽', 'Veg Hot & Sour Soup': '🌶',
-    'Chicken Sweet Corn Soup': '🍗', 'Chicken Hot & Sour Soup': '🔥'
-  };
-  
-  const emoji = emojiMap[item.name] || '🍽';
+  const itemSvg = getItemImage(item.name, item.type);
   
   div.innerHTML = `
     <div class="card-image">
-      <div style="font-size:4rem;text-align:center;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg, rgba(255,107,26,0.1), rgba(255,179,71,0.05));">
-        ${emoji}
-      </div>
+      ${itemSvg}
     </div>
     <div class="card-top">
       <div class="item-name">${item.name}</div>
       <div class="item-badge ${item.veg ? 'veg' : 'nonveg'}"><div class="dot"></div></div>
     </div>
     <div class="item-desc">${item.desc}</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:0.8rem;">
       <div class="item-price">${item.price}</div>
-      <span style="font-size:0.72rem;color:var(--fire);font-weight:600;letter-spacing:0.05em;opacity:0.8;">TAP →</span>
+      <span style="font-size:0.7rem;color:var(--fire);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;opacity:0.9;">Tap for info →</span>
     </div>
   `;
-  // Click to show detail modal
-  div.addEventListener('click', () => openItemModal(item));
-  // 3D tilt effect
-  div.addEventListener('mousemove', e => {
-    const r = div.getBoundingClientRect();
-    const x = e.clientX - r.left - r.width / 2;
-    const y = e.clientY - r.top - r.height / 2;
-    div.style.transform = `perspective(600px) rotateY(${x/20}deg) rotateX(${-y/20}deg) translateY(-8px) scale(1.02)`;
+  
+  // Click handler - MUST work!
+  div.addEventListener('click', function() {
+    openItemModal(item);
   });
-  div.addEventListener('mouseleave', () => {
+  
+  // 3D tilt effect on mouse move
+  div.addEventListener('mousemove', function(e) {
+    const rect = div.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    div.style.transform = `perspective(1000px) rotateY(${x/15}deg) rotateX(${-y/15}deg) translateY(-8px) scale(1.02)`;
+  });
+  
+  div.addEventListener('mouseleave', function() {
     div.style.transform = '';
-    div.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
   });
+  
   return div;
 }
 
@@ -1896,8 +2039,7 @@ function renderMenu(filter = 'all') {
   const filtered = filter === 'all' ? menuData : menuData.filter(i => i.type === filter);
   filtered.forEach((item, idx) => {
     const card = createCard(item);
-    card.style.animationDelay = `${idx * 0.05}s`;
-    card.style.animation = 'fadeInUp 0.5s ease both';
+    card.style.setProperty('--card-index', idx);
     grid.appendChild(card);
   });
 }
@@ -2006,12 +2148,7 @@ function createSparkles(x, y) {
   }
 }
 
-// Add sparkle on modal open
-const oldOpenItemModal = openItemModal;
-window.openItemModal = function(item) {
-  oldOpenItemModal(item);
-  createSparkles(window.innerWidth / 2, window.innerHeight / 2);
-};
+// sparkle removed
 
 </script>
 </body>
